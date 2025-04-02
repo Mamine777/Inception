@@ -1,36 +1,27 @@
 #!/bin/bash
 
-# Create PHP-FPM runtime directory
+# Set PHP-FPM socket directory permissions
 mkdir -p /run/php
 chown www-data:www-data /run/php
 
-# Start PHP-FPM in background
-php-fpm7.4 -D
+# Verify and fix WordPress permissions
+chown -R www-data:www-data /var/www/wordpress
+find /var/www/wordpress -type d -exec chmod 755 {} \;
+find /var/www/wordpress -type f -exec chmod 644 {} \;
+chmod -R 775 /var/www/wordpress/wp-content/uploads
 
-# Wait for PHP-FPM to start
-sleep 2
-
-# Database connection check
-check_db() {
-    mysql -h mariadb \
-          -u"$(cat ${MYSQL_USER_FILE})" \
-          -p"$(cat ${MYSQL_PASSWORD_FILE})" \
-          -e "SELECT 1" &>/dev/null
-    return $?
-}
-
-# Wait for database
+# Wait for MariaDB to be ready
 timeout=60
-while ! check_db && [ $timeout -gt 0 ]; do
-    echo "$(date) - Waiting for MariaDB... (${timeout}s remaining)"
+while ! mysqladmin ping -h mariadb -u$(cat ${MYSQL_USER_FILE}) -p$(cat ${MYSQL_PASSWORD_FILE}) --silent && [ $timeout -gt 0 ]; do
     sleep 2
     timeout=$((timeout-2))
+    echo "Waiting for database... (${timeout}s remaining)"
 done
 
 if [ $timeout -le 0 ]; then
-    echo "ERROR: Timed out waiting for database"
+    echo "ERROR: Database connection timed out"
     exit 1
 fi
 
-# Keep container running
-tail -f /var/log/php7.4-fpm.log
+# Start PHP-FPM in foreground
+exec php-fpm7.4 -F
