@@ -8,7 +8,7 @@ services:
     ports:
       - "443:443"
     volumes:
-      - wordpress_volume:/var/www/html
+      - wordpress_volume:/var/www/wordpress  # Changed to match WordPress
       - ./requirements/nginx/conf:/etc/nginx/conf.d
     networks:
       - inception_network
@@ -43,7 +43,7 @@ services:
       context: ./requirements/wordpress
     container_name: wordpress
     volumes:
-      - wordpress_volume:/var/www/wordpress
+      - wordpress_volume:/var/www/wordpress  # Matches Nginx
     networks:
       - inception_network
     restart: unless-stopped
