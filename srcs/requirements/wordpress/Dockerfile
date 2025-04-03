@@ -44,4 +44,4 @@ RUN chmod +x /tmp/configure.sh
 
 EXPOSE 9000
 
-ENTRYPOINT ["/tmp/configure.sh"]
+CMD ["/tmp/configure.sh"]

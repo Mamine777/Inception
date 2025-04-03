@@ -1,14 +1,11 @@
 #!/bin/bash
 
 # Create PHP-FPM runtime directory
-mkdir -p /run/php
+mkdir -p /run/php /var/php
 chown www-data:www-data /run/php
 
-# Start PHP-FPM in background
-php-fpm7.4 -D
-
-# Wait for PHP-FPM to start
-sleep 2
+pkill php-fpm7.4 || true
+rm -rf /run/php/php7.4-fpm.sock
 
 # Database connection check
 check_db() {
@@ -33,4 +30,4 @@ if [ $timeout -le 0 ]; then
 fi
 
 # Keep container running
-tail -f /var/log/php7.4-fpm.log
+exec php-fpm7.4 -F

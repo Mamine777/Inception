@@ -14,4 +14,4 @@ RUN chmod +x /tmp/configure.sh
 
 EXPOSE 443
 
-ENTRYPOINT ["/tmp/configure.sh"]
+CMD ["/tmp/configure.sh"]

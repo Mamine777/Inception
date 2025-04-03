@@ -13,4 +13,4 @@ EXPOSE 3306
 
 VOLUME /var/lib/mysql
 
-ENTRYPOINT ["/tmp/configure.sh"]
+CMD ["/tmp/configure.sh"]
