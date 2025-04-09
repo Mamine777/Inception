@@ -14,7 +14,7 @@ services:
       - inception_network
     depends_on:
       - wordpress
-    restart: unless-stopped
+    restart: always
     env_file:
       - .env
     secrets:
@@ -30,7 +30,7 @@ services:
       - mariadb_volume:/var/lib/mysql
     networks:
       - inception_network
-    restart: unless-stopped
+    restart: always
     env_file:
       - .env
     secrets:
@@ -46,7 +46,7 @@ services:
       - wordpress_volume:/var/www/wordpress  # Matches Nginx
     networks:
       - inception_network
-    restart: unless-stopped
+    restart: always
     env_file:
       - .env
     secrets:
