@@ -10,17 +10,13 @@ services:
     volumes:
       - wordpress_volume:/var/www/wordpress
       - ./requirements/nginx/conf:/etc/nginx/conf.d
-    depends_on:
-      - wordpress
     networks:
       - inception_network
-    restart: always
+    depends_on:
+      - wordpress
+    restart: unless-stopped
     env_file:
       - .env
-    secrets:
-      - db_root_password
-      - db_user
-      - db_password
 
   mariadb:
     build:
@@ -30,13 +26,9 @@ services:
       - mariadb_volume:/var/lib/mysql
     networks:
       - inception_network
-    restart: always
+    restart: unless-stopped
     env_file:
       - .env
-    secrets:
-      - db_root_password
-      - db_user
-      - db_password
 
   wordpress:
     build:
@@ -44,21 +36,11 @@ services:
     container_name: wordpress
     volumes:
       - wordpress_volume:/var/www/wordpress
-    expose:
-      - "9000"
     networks:
       - inception_network
-    restart: always
+    restart: unless-stopped
     env_file:
       - .env
-    secrets:
-      - db_root_password
-      - db_user
-      - db_password
-      - wp_admin_user
-      - wp_admin_password
-      - wp_user
-      - wp_user_password
 
 volumes:
   mariadb_volume:
@@ -77,20 +59,4 @@ volumes:
 networks:
   inception_network:
     driver: bridge
-
-secrets:
-  db_root_password:
-    file: ./secrets/db_root_password.txt
-  db_user:
-    file: ./secrets/db_user.txt
-  db_password:
-    file: ./secrets/db_password.txt
-  wp_admin_user:
-    file: ./secrets/wp_admin_user.txt
-  wp_admin_password:
-    file: ./secrets/wp_admin_password.txt
-  wp_user:
-    file: ./secrets/wp_user.txt
-  wp_user_password:
-    file: ./secrets/wp_user_password.txt
 
